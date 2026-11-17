@@ -1,7 +1,7 @@
 name: Stash System Sync
 description: Coordinate file organization, Jellyfin exports, performer images, favorites and Whisparr through
   one durable workflow. Dry run is enabled by default.
-version: 0.2.0
+version: 0.2.1
 interface: raw
 exec:
 - python3
@@ -190,11 +190,6 @@ settings:
     description: Never move these paths during manual cleanup. One path per line.
     type: STRING
 tasks:
-- name: Migrate from Stash Workflow
-  description: Back up and copy settings and SQLite state from the old StashWorkflow installation, then disable
-    the old plugin. No library scan is started.
-  defaultArgs:
-    mode: migrate_legacy
 - name: Show overall progress
   description: Gespeicherten Gesamtstand mit offenen und fehlgeschlagenen Aufgaben anzeigen.
   defaultArgs:

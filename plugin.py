@@ -23,18 +23,6 @@ def run(payload, data=DATA, stash=None):
     mode = args.get("mode", "")
     state = State(data)
     try:
-        if mode == "migrate_legacy":
-            from workflow.identity_migration import migrate
-
-            client = stash or Stash(payload.get("server_connection") or {})
-            result = migrate(client, state)
-            import_json_mappings(state)
-            Log().info(
-                "Migration complete: settings and SQLite mappings copied; old StashWorkflow disabled; backup retained"
-            )
-            if state.pending() and state.request_worker():
-                client.schedule()
-            return result
         import_json_mappings(state)
         if mode == "mapping_status":
             return mapping_status(state)

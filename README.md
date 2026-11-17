@@ -23,23 +23,14 @@ so system pip is not required.
 the logs before enabling productive operation. Do not run the old individual
 plugins alongside their replacements.
 
-## Existing StashWorkflow installation
+## Updates and existing data
 
-Install the new plugin without changing its settings, then run **Migrate from
-Stash Workflow** under the new plugin tasks. The old installation must already
-use the current grouped settings and SQLite performer mappings (0.1.13).
-
-The task requires idle workers, creates a private ZIP backup, copies the SQLite
-database using SQLite's backup API, transfers all settings unchanged and disables
-the old `StashWorkflow` plugin. Productive/dry-run mode is preserved. Existing
-pending work is resumed under the new ID; no library scan is started. The old
-folder and migration backup remain available. Do not uninstall the old plugin
-until you have checked the new status and logs.
-
-The task detects the old `StashWorkflow/data` folder next to the new plugin or
-its source directory. It refuses to overwrite an already configured new plugin
-or an existing new mapping database. If the copy or settings transfer fails,
-the destination database, settings and old enable state are rolled back.
+Use **Settings → Plugins → Installed Plugins → Update** to install new versions.
+Settings and `data/workflow.sqlite` remain in place. Version 0.2.1 removes the
+completed one-time StashWorkflow migration task; it does not delete settings,
+mappings, migration receipts or private backups. No task needs to be run after
+updating. Migration from the older StashWorkflow name is available only in the
+previous 0.2.0 release for installations that still need it.
 
 ## Features
 
@@ -63,7 +54,7 @@ Jellyfin URL, API key and username are entered once. The internal user ID is
 resolved automatically. See [all settings](docs/SETTINGS.md).
 
 Tasks operate only on what you request. **Queue all scenes** is an explicit
-library-wide operation; installation and migration do not start it.
+library-wide operation; installation and updates do not start it.
 
 ## Development and releases
 

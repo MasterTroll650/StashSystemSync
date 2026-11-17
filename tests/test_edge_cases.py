@@ -92,7 +92,7 @@ def test_manifest_declares_all_hooks_and_tasks():
         "Performer.Create.Post",
         "Performer.Update.Post",
     }
-    assert len(manifest["tasks"]) == 9
+    assert len(manifest["tasks"]) == 8
     assert any(t["defaultArgs"].get("mode") == "progress" for t in manifest["tasks"])
     from workflow.settings import SETTING_KEYS
 

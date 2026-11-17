@@ -3,7 +3,7 @@
 import re
 import sys
 
-VERSION = "0.2.0"
+VERSION = "0.2.1"
 
 
 def overall_message(progress):
