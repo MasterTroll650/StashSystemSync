@@ -1,6 +1,7 @@
 import hashlib
 import shutil
 import zipfile
+from datetime import datetime
 from pathlib import Path
 
 import yaml
@@ -27,6 +28,7 @@ def test_package_allowlist_excludes_private_state_and_has_matching_index(tmp_pat
     assert checksum == hashlib.sha256(archive.read_bytes()).hexdigest()
     index = yaml.safe_load((archive.parent / "index.yml").read_text())
     assert index[0]["sha256"] == checksum and index[0]["id"] == "StashSystemSync"
+    datetime.strptime(index[0]["date"], "%Y-%m-%d %H:%M:%S")
     with zipfile.ZipFile(archive) as package:
         names = package.namelist()
         assert "StashSystemSync.yml" in names and "vendor/pip.whl" in names

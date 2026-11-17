@@ -66,7 +66,7 @@ def build(root, output, wheel=None):
             "id": "StashSystemSync",
             "name": "Stash System Sync",
             "version": metadata["version"],
-            "date": metadata["date"] + "T00:00:00Z",
+            "date": metadata["date"] + " 00:00:00",
             "path": "https://github.com/"
             + REPOSITORY
             + "/releases/download/v"
