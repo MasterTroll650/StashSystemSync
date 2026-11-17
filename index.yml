@@ -1,0 +1,9 @@
+- id: StashSystemSync
+  name: Stash System Sync
+  version: 0.2.0
+  date: '2026-11-17T00:00:00Z'
+  path: https://github.com/MasterTroll650/StashSystemSync/releases/download/v0.2.0/StashSystemSync.zip
+  sha256: 460135626c2882855d170466a24e00dcb7c480b75e8bfcd1eb0a04f80d52332f
+  metadata:
+    description: Coordinate file organization, Jellyfin exports, performer images,
+      favorites and Whisparr through one durable workflow. Dry run is enabled by default.
