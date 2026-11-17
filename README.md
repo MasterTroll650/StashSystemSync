@@ -9,7 +9,7 @@ remembered so repeated hooks do not repeat every operation.
 In **Settings → Plugins → Available Plugins → Add Source**, enter:
 
 - Name: `Stash System Sync`
-- Source URL: `https://raw.githubusercontent.com/MasterTroll650/StashSystemSync/main/index.yml`
+- Source URL: `https://raw.githubusercontent.com/MasterTroll650/StashSystemSync/refs/heads/main/index.yml`
 - Local Path: `StashSystemSync`
 
 Open the source, select **Stash System Sync**, and install it. Reload plugins.
