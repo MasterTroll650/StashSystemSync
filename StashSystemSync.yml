@@ -1,0 +1,230 @@
+name: Stash System Sync
+description: Coordinate file organization, Jellyfin exports, performer images, favorites and Whisparr through
+  one durable workflow. Dry run is enabled by default.
+version: 0.2.0
+interface: raw
+exec:
+- python3
+- '{pluginDir}/plugin.py'
+errLog: info
+settings:
+  00_01_dry_run:
+    displayName: General | Dry run
+    description: Preview changes without modifying media, metadata or external services.
+    type: BOOLEAN
+  00_02_wait_for_organized:
+    displayName: General | Wait for Organized
+    description: Process a scene only after it is marked Organized. A later scene update starts processing.
+    type: BOOLEAN
+  00_03_debounce_seconds:
+    displayName: General | Collect updates (seconds)
+    type: NUMBER
+    description: Combine rapid updates for the same item before processing.
+  00_04_request_timeout:
+    displayName: General | HTTP timeout (seconds)
+    type: NUMBER
+    description: Shared request timeout for Stash, Jellyfin and Whisparr.
+  00_05_max_attempts:
+    displayName: General | Maximum attempts
+    type: NUMBER
+    description: Maximum processing attempts before a job is marked failed.
+  00_06_worker_seconds:
+    displayName: General | Worker duration (seconds)
+    type: NUMBER
+    description: Maximum duration of one worker task. Pending jobs continue in the next task.
+  00_07_log_progress_seconds:
+    displayName: General | Log progress every (seconds)
+    description: Minimum 5 seconds. Errors are logged immediately; the progress bar shows overall progress.
+    type: NUMBER
+  10_01_rename_enabled:
+    displayName: Rename | Enabled
+    type: BOOLEAN
+    description: Rename and move scene files using the configured templates.
+  10_02_rename_dryRun:
+    displayName: Rename | Dry run
+    description: Preview file renames and moves without changing files.
+    type: BOOLEAN
+  10_03_rename_defaultDirectoryPathFormat:
+    displayName: Rename | Directory template
+    description: Target directory template for scene files.
+    type: STRING
+  10_04_rename_defaultFileNameFormat:
+    displayName: Rename | Filename template
+    description: Target filename template for scene files.
+    type: STRING
+  10_05_rename_renameUnorganized:
+    displayName: Rename | Include unorganized scenes
+    description: Allow renaming unorganized scenes. The global Organized requirement still takes precedence.
+    type: BOOLEAN
+  10_06_rename_renameRelatedFiles:
+    displayName: Rename | Move matching sidecar files
+    description: Rename and move files sharing the video basename, such as .funscript or .vtt files.
+    type: BOOLEAN
+  10_07_rename_duplicateFileSuffix:
+    displayName: Rename | Duplicate filename suffix
+    description: 'Suffix for duplicate names. Use $index$ as the counter; default:  ($index$).'
+    type: STRING
+  10_08_rename_removeExtraSpacesFromFileName:
+    displayName: Rename | Remove extra spaces
+    description: Remove redundant spaces from generated filenames.
+    type: BOOLEAN
+  10_09_rename_tagReplace:
+    displayName: Rename | Tag replacements
+    description: 'Mappings: "Tag"=="Text", separated by commas or semicolons. Insert with $tag_replace$ in
+      templates.'
+    type: STRING
+  10_10_rename_allowUnsafeCharacters:
+    displayName: Rename | Allow unsafe characters
+    description: Allow characters that may be unsupported in file and directory names.
+    type: BOOLEAN
+  20_01_jellyfin_url:
+    type: STRING
+    displayName: Jellyfin connection | Server URL
+    description: One shared Jellyfin URL for exports, favorites and performer synchronization.
+  20_02_jellyfin_api_key:
+    type: STRING
+    displayName: Jellyfin connection | API key
+    description: One shared Jellyfin API key for all Jellyfin operations.
+  20_03_jellyfin_username:
+    type: STRING
+    displayName: Jellyfin connection | Username
+    description: Jellyfin account name. The internal user ID is resolved automatically and reused within each
+      worker.
+  30_01_export_enabled:
+    displayName: Jellyfin export | Enabled
+    type: BOOLEAN
+    description: Write scene NFO files, posters and fanart and notify Jellyfin.
+  30_02_export_DRY_RUN:
+    displayName: Jellyfin export | Dry run
+    type: BOOLEAN
+    description: Preview scene export without writing files or notifying Jellyfin.
+  30_03_export_ORGANIZED:
+    displayName: Jellyfin export | Export organized scenes only
+    description: Restrict scene exports to scenes marked Organized.
+    type: BOOLEAN
+  30_04_jellyfin_path_mappings:
+    displayName: Jellyfin export | Path mappings
+    description: One Stash-root=Jellyfin-root mapping per line. The longest matching root wins. This does not
+      move files.
+    type: STRING
+  30_05_export_IGNORED_FILE_SUFFIXES:
+    displayName: Jellyfin export | Ignored video suffixes
+    description: Skip matching video basename suffixes. Separate by lines or commas; $index$ matches a number.
+    type: STRING
+  30_06_export_EXCLUDED_PATHS:
+    displayName: Jellyfin export | Excluded paths
+    type: STRING
+    description: Do not export scenes from these paths. One path per line.
+  40_01_performer_enabled:
+    displayName: Performer sync | Enabled
+    type: BOOLEAN
+    description: Synchronize performer details and images with existing Jellyfin people.
+  40_02_performer_dry_run:
+    displayName: Performer sync | Dry run
+    type: BOOLEAN
+    description: Preview performer synchronization without updating Jellyfin or Stash.
+  40_03_performer_update_image:
+    displayName: Performer sync | Update images
+    description: Prepare images automatically and upload them through the Jellyfin API. SVG is rendered as
+      PNG.
+    type: BOOLEAN
+  40_04_performer_update_overview:
+    displayName: Performer sync | Update performer details
+    description: Update biography, original title, birth/death dates, birth year and birthplace.
+    type: BOOLEAN
+  40_05_performer_add_jellyfin_profile_url:
+    displayName: Performer sync | Save Jellyfin profile link
+    description: Add the matched Jellyfin person link to the performer URLs in Stash.
+    type: BOOLEAN
+  50_01_whisparr_enabled:
+    displayName: Whisparr bridge | Enabled
+    type: BOOLEAN
+    description: Synchronize scene information and monitoring with Whisparr.
+  50_02_whisparr_WHISPARR_URL:
+    displayName: Whisparr bridge | Server URL
+    type: STRING
+    description: Base URL of the Whisparr server.
+  50_03_whisparr_WHISPARR_API_KEY:
+    displayName: Whisparr bridge | API key
+    type: STRING
+    description: Whisparr API key.
+  50_04_whisparr_STASHDB_ENDPOINT_SUBSTR:
+    displayName: Whisparr bridge | StashDB host match
+    description: 'Match scene references from this StashDB host; default: stashdb.org.'
+    type: STRING
+  50_05_whisparr_path_mappings:
+    displayName: Whisparr bridge | Path mappings
+    description: Optional source=destination mappings, one per line. Otherwise map the library root to the
+      Whisparr root.
+    type: STRING
+  50_06_whisparr_MONITORED:
+    displayName: Whisparr bridge | Monitor synchronized scenes
+    description: Mark synchronized scenes as monitored in Whisparr.
+    type: BOOLEAN
+  60_01_auto_cleanup_enabled:
+    displayName: Folder cleanup | Remove emptied source folders
+    type: BOOLEAN
+    description: After moving videos, remove only affected source directories that are empty.
+  60_02_cleanup_DRY_RUN:
+    displayName: Folder cleanup | Dry run for manual cleanup
+    description: Log manual folder cleanup without moving folders.
+    type: BOOLEAN
+  60_03_cleanup_DELETE_PATH:
+    displayName: Folder cleanup | Cleanup destination
+    description: Base path where manual cleanup creates its destination folder.
+    type: STRING
+  60_04_cleanup_DELETE_FOLDER_NAME:
+    displayName: Folder cleanup | Cleanup folder name
+    description: Destination folder name for manual cleanup.
+    type: STRING
+  60_05_cleanup_INCLUDE_FILE_FOLDERS:
+    displayName: Folder cleanup | Include small non-video folders
+    description: Manual cleanup also moves folders with no videos if their total size is below the limit.
+    type: BOOLEAN
+  60_06_cleanup_SIZE_LIMIT_MB:
+    displayName: Folder cleanup | Small folder limit (MB)
+    description: Maximum total size for small non-video folders during manual cleanup.
+    type: STRING
+  60_07_cleanup_EXCLUDED_PATHS:
+    displayName: Folder cleanup | Excluded paths
+    description: Never move these paths during manual cleanup. One path per line.
+    type: STRING
+tasks:
+- name: Migrate from Stash Workflow
+  description: Back up and copy settings and SQLite state from the old StashWorkflow installation, then disable
+    the old plugin. No library scan is started.
+  defaultArgs:
+    mode: migrate_legacy
+- name: Show overall progress
+  description: Gespeicherten Gesamtstand mit offenen und fehlgeschlagenen Aufgaben anzeigen.
+  defaultArgs:
+    mode: progress
+- name: Process queue
+  defaultArgs:
+    mode: worker
+- name: Queue all scenes
+  defaultArgs:
+    mode: enqueue_all
+- name: Retry failed jobs
+  defaultArgs:
+    mode: retry
+- name: Sync favorite performers
+  defaultArgs:
+    mode: favorites
+- name: Rebuild Whisparr mappings
+  defaultArgs:
+    mode: rebuild
+- name: Clean empty and small non-video folders
+  defaultArgs:
+    mode: cleanup
+- name: Show status
+  defaultArgs:
+    mode: status
+hooks:
+- name: Aenderung vormerken
+  triggeredBy:
+  - Scene.Update.Post
+  - Scene.Destroy.Post
+  - Performer.Create.Post
+  - Performer.Update.Post
+url: https://github.com/MasterTroll650/StashSystemSync

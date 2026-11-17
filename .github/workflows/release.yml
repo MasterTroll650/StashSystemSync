@@ -1,0 +1,28 @@
+name: Publish Stash package
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install -r requirements-dev.txt
+      - run: python -m ruff check workflow tests plugin.py tools
+      - run: python -m pytest -q
+      - name: Check release version
+        run: python -c "import json,os; assert os.environ['GITHUB_REF_NAME']=='v'+json.load(open('release.json'))['version']"
+      - run: python tools/build_package.py
+      - name: Publish release asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" dist/StashSystemSync.zip --verify-tag --title "Stash System Sync $GITHUB_REF_NAME" --generate-notes
+      - name: Publish source index
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python tools/publish_index.py
